@@ -1,23 +1,12 @@
-from HighScores import HighScores
-from screens.BaseScreeen import BaseScreen
+from space_fighter.high_scores import HighScores
+from space_fighter.screens.base_screen import BaseScreen
+
 
 class GameOverScreen(BaseScreen):
-    """
-    Represents the game over screen. 
+    """Final score plus a text box where the player types a name.
 
-    Inherits from BaseScreen class.
-
-    Attributes:
-    - score (int): The player's score.
-    - name (str): The player's name.
-    - high_scores (HighScores): An instance of the HighScores class.
-
-    Methods:
-    - __init__(self, canvas, score, show_high_scores): Initializes the GameOverScreen object.
-    - draw(self): Draws the game over screen.
-    - on_key_press(self, event): Handles key press events.
-    - bind_keys(self): Binds key events to the canvas.
-    - unbind_keys(self): Unbinds key events from the canvas.
+    Every key press is collected into `name`; Backspace deletes a character and
+    Enter saves the score to the leaderboard and opens it.
     """
 
     score = 0
@@ -25,23 +14,11 @@ class GameOverScreen(BaseScreen):
     high_scores = HighScores()
 
     def __init__(self, canvas, score, show_high_scores):
-        """
-        Initializes the GameOverScreen object.
-
-        Parameters:
-        - canvas: The canvas on which to draw the screen.
-        - score (int): The player's score.
-        - show_high_scores (function): A function to show the high scores screen.
-        """
         super().__init__(canvas)
         self.score = score
         self.show_high_scores = show_high_scores
 
-
     def draw(self):
-        """
-        Draws the game over screen.
-        """
         center_x = self.canvas.winfo_width() / 2
         game_over_y = 100
         game_over_gap = 50
@@ -53,6 +30,8 @@ class GameOverScreen(BaseScreen):
 
         self.canvas.create_text(center_x, enter_your_name_y + 0 * enter_your_name_gap, text="Please enter your name and press Enter", font=("Helvetica", 15))
 
+        # The input field is drawn by hand: a white rectangle with the typed
+        # name centered inside it.
         box_font_size = 20
         box_width = 300
         box_height = 40
@@ -64,15 +43,8 @@ class GameOverScreen(BaseScreen):
         self.canvas.create_polygon(box_left, box_top, box_right, box_top, box_right, box_bottom, box_left, box_bottom, fill="white", outline="black")
         self.canvas.create_text(center_x, enter_your_name_y + 1 * enter_your_name_gap, text=self.name, font=("Helvetica", box_font_size, "bold"))
 
-
     def on_key_press(self, event):
-        """
-        Handles key press events. 
-        Loads the high scores, adds the new player's score, saves the high scores, and shows the high scores screen.
-
-        Parameters:
-        - event: The key press event.
-        """
+        """Edit the name, or save the score and show the leaderboard on Enter."""
         if event.keysym == "BackSpace":
             self.name = self.name[:-1]
         elif event.keysym == "Return":
@@ -84,17 +56,8 @@ class GameOverScreen(BaseScreen):
         else:
             self.name += event.char
 
-
     def bind_keys(self):
-        """
-        Binds key events to the canvas.
-        """
         self.canvas.bind_all("<Key>", self.on_key_press)
 
-
     def unbind_keys(self):
-        """
-        Unbinds key events from the canvas.
-        """
         self.canvas.unbind_all("<Key>")
-       
